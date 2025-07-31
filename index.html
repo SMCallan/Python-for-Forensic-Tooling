@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Blueprint: Python for Digital Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: The SPA is designed as a task-oriented, interactive playbook, not a linear report. The structure is broken into four logical phases of an operation: Framework (foundational principles), Acquisition (data gathering tools), Analysis (data interpretation tools), and Workflow (a synthesized case study). This structure was chosen because it mirrors how an operator would actually use the blueprint—jumping to the relevant section for a specific task (e.g., "choosing a proxy" or "parsing a file"). A persistent top navigation allows for immediate access to any section, facilitating a non-linear, needs-based exploration of the content. Interactions are designed to compare tools, visualize processes, and make abstract code concepts tangible. -->
+    <!-- Visualization & Content Choices: 
+        - Framework/Proxies: Goal: Compare. Method: Chart.js Radar Chart. Interaction: Hover for details. Justification: Visually compares multiple proxy attributes (cost, anonymity, etc.) simultaneously, which is more effective than a table.
+        - Framework/Environments: Goal: Compare. Method: HTML/Tailwind side-by-side cards. Interaction: Click to reveal details. Justification: A clean, direct way to compare the two options (Docker vs. VM).
+        - Acquisition/Scrapy Arch: Goal: Organize. Method: HTML/Tailwind diagram. Interaction: Click component to see details. Justification: Makes the abstract data flow of Scrapy tangible and easy to understand.
+        - Analysis/Pandas: Goal: Organize/Demonstrate. Method: Interactive HTML table. Interaction: Click row to see code/explanation. Justification: Directly links investigative tasks to the specific pandas code required, creating an actionable reference.
+        - Analysis/Struct: Goal: Demonstrate. Method: Interactive HTML "File Dissector". Interaction: Click on file header bytes to see parsing code. Justification: Demystifies binary parsing by providing a hands-on, visual tool.
+        - Workflow: Goal: Synthesize. Method: Vertical HTML/Tailwind timeline. Interaction: Click to expand phase details. Justification: Effectively visualizes the end-to-end process and connects all the previously introduced concepts.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFDFB;
+            color: #374151;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #3B82F6;
+            border-bottom-color: #3B82F6;
+        }
+        .section-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            transition: all 0.3s ease;
+        }
+        .section-card:hover {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+            transform: translateY(-2px);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .code-block {
+            background-color: #1F2937;
+            color: #F9FAFB;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .tab-button {
+            transition: all 0.2s ease;
+        }
+        .tab-button.active {
+            background-color: #3B82F6;
+            color: white;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.7rem;
+            top: 0.5rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 9999px;
+            background-color: #DBEAFE;
+            border: 3px solid #3B82F6;
+        }
+        .timeline-line {
+            position: absolute;
+            left: -2.1rem;
+            top: 0.5rem;
+            bottom: -0.5rem;
+            width: 2px;
+            background-color: #E5E7EB;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-gray-800">Python Forensics Playbook</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#framework" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Framework</a>
+                        <a href="#acquisition" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Acquisition</a>
+                        <a href="#analysis" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Analysis</a>
+                        <a href="#workflow" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Workflow</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <section id="intro" class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-4">An Interactive Blueprint for Digital Intelligence</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600">This playbook translates the "Python for Digital Intelligence" blueprint into a dynamic, hands-on tool. Navigate through the core operational phases, explore interactive visualizations of key concepts, and see how tools and techniques integrate in a real-world scenario.</p>
+        </section>
+
+        <!-- Section 1: The Operational Framework -->
+        <section id="framework" class="mb-20 scroll-mt-20">
+            <div class="text-center mb-12">
+                <span class="text-blue-600 font-semibold">Phase 1</span>
+                <h2 class="text-3xl font-bold text-gray-900 mt-2">The Operational Framework</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Every operation rests on a foundation of security, auditability, and cost management. This section covers the non-negotiable principles that ensure your work is sound, defensible, and sustainable.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Environment Isolation -->
+                <div class="section-card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Environment Isolation: Sandbox Your Operations</h3>
+                    <p class="text-gray-600 mb-6">Prevent cross-contamination and ensure evidence integrity by executing all tasks in a sandboxed environment. The choice between containers and VMs is a tactical decision based on the risk profile of your task.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="env-selector">
+                        <div data-content="docker" class="cursor-pointer p-4 border-2 border-blue-500 bg-blue-50 rounded-lg text-center">
+                            <span class="text-2xl">📦</span>
+                            <h4 class="font-semibold mt-2">Container (Docker)</h4>
+                            <p class="text-sm text-gray-500">Lightweight & Fast</p>
+                        </div>
+                        <div data-content="vm" class="cursor-pointer p-4 border border-gray-300 rounded-lg text-center">
+                            <span class="text-2xl">🖥️</span>
+                            <h4 class="font-semibold mt-2">Virtual Machine</h4>
+                            <p class="text-sm text-gray-500">Maximum Isolation</p>
+                        </div>
+                    </div>
+                    <div id="env-details" class="mt-6 text-gray-700"></div>
+                </div>
+
+                <!-- Audit Trail -->
+                <div class="section-card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Audit Trail: Structured Logging</h3>
+                     <p class="text-gray-600 mb-6">Every action must be recorded in a detailed, machine-readable format. Use Python's `logging` module to create a forensically sound audit trail. Click the tabs to see the implementation and the resulting structured output.</p>
+                    <div class="flex border-b border-gray-200 mb-4">
+                        <button class="tab-button flex-1 py-2 px-4 text-sm font-medium text-gray-500 active" data-target="log-code">Formatter Code</button>
+                        <button class="tab-button flex-1 py-2 px-4 text-sm font-medium text-gray-500" data-target="log-output">JSON Output</button>
+                    </div>
+                    <div id="log-content-display">
+                        <div id="log-code" class="code-block text-sm"></div>
+                        <div id="log-output" class="code-block text-sm hidden"></div>
+                    </div>
+                </div>
+            </div>
+
+             <div class="section-card p-6 mt-8">
+                <h3 class="text-xl font-semibold mb-4 text-center text-gray-800">Cost-Effective Resource Management</h3>
+                <p class="text-gray-600 mb-8 text-center max-w-3xl mx-auto">For a small unit, efficient resource management is critical. This involves a cost-benefit analysis of proxy services and a tiered strategy for data storage to balance capability with budget.</p>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h4 class="text-lg font-semibold mb-2 text-center">Proxy Service Comparison</h4>
+                        <p class="text-sm text-gray-500 text-center mb-4">Hover over the chart to compare proxy types. A hybrid, tiered approach is the most cost-effective strategy.</p>
+                        <div class="chart-container">
+                            <canvas id="proxyChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-4 text-center">Tiered Data Storage Strategy</h4>
+                        <p class="text-sm text-gray-500 text-center mb-6">Match storage cost to access frequency. Archive completed case files to dramatically reduce long-term costs.</p>
+                        <div class="space-y-4">
+                            <div class="flex items-center p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <span class="text-2xl mr-4">🔥</span>
+                                <div>
+                                    <h5 class="font-semibold">Standard / Hot Storage</h5>
+                                    <p class="text-sm text-gray-600">For active cases requiring frequent access. Highest cost.</p>
+                                </div>
+                            </div>
+                            <div class="text-center text-2xl text-gray-400">↓</div>
+                            <div class="flex items-center p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                <span class="text-2xl mr-4">❄️</span>
+                                <div>
+                                    <h5 class="font-semibold">Cold / Archive Storage</h5>
+                                    <p class="text-sm text-gray-600">For closed cases. Low cost, higher retrieval fees.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Web Data Acquisition -->
+        <section id="acquisition" class="mb-20 scroll-mt-20">
+            <div class="text-center mb-12">
+                <span class="text-blue-600 font-semibold">Phase 2</span>
+                <h2 class="text-3xl font-bold text-gray-900 mt-2">Secure Web Data Acquisition</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">This section details the tactical implementation of Python's data acquisition libraries, integrating the OpSec principles from the framework. The choice is between surgical precision and scaled crawling.</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-2 section-card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Tool Selection: requests vs. Scrapy</h3>
+                    <p class="text-gray-600 mb-6">Choose the right tool for the job. Use `requests` for targeted, individual interactions and `Scrapy` for large-scale, asynchronous crawling of entire websites.</p>
+                    <ul class="space-y-4">
+                        <li class="p-4 rounded-lg border border-gray-200 hover:bg-gray-50">
+                            <h4 class="font-semibold text-blue-700">requests: The Scalpel</h4>
+                            <p class="text-sm text-gray-600">Ideal for API interaction, single page downloads, and simple session management. Use with `requests.Session()` for persistence.</p>
+                        </li>
+                        <li class="p-4 rounded-lg border border-gray-200 hover:bg-gray-50">
+                            <h4 class="font-semibold text-green-700">Scrapy: The Assembly Line</h4>
+                            <p class="text-sm text-gray-600">A full framework for crawling. Its modular architecture with Middlewares and Pipelines is perfect for building reusable, secure, and evasive crawlers.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="lg:col-span-3 section-card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Scrapy Architecture: The OpSec Control Plane</h3>
+                    <p class="text-gray-600 mb-6">Scrapy's power is its modularity. OpSec logic like proxy and user-agent rotation is centralized in Downloader Middlewares, keeping it separate from the data extraction logic in Spiders. Click a component to learn its role.</p>
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div id="scrapy-diagram" class="flex-grow flex flex-col items-center space-y-2">
+                            <div class="scrapy-component" data-info="spider">Spider</div>
+                            <div class="text-2xl text-gray-400">↓</div>
+                            <div class="scrapy-component" data-info="engine">Engine</div>
+                            <div class="text-2xl text-gray-400">↓</div>
+                            <div class="scrapy-component" data-info="scheduler">Scheduler</div>
+                            <div class="text-2xl text-gray-400">↓</div>
+                            <div class="scrapy-component" data-info="downloader">Downloader (via Middlewares)</div>
+                            <div class="text-2xl text-gray-400">↓</div>
+                            <div class="scrapy-component" data-info="pipeline">Item Pipeline</div>
+                        </div>
+                        <div id="scrapy-info-panel" class="md:w-1/2 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[150px]">
+                            <h4 id="scrapy-info-title" class="font-semibold text-gray-800"></h4>
+                            <p id="scrapy-info-text" class="text-sm text-gray-600 mt-2"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Forensic Data Analysis -->
+        <section id="analysis" class="mb-20 scroll-mt-20">
+            <div class="text-center mb-12">
+                <span class="text-blue-600 font-semibold">Phase 3</span>
+                <h2 class="text-3xl font-bold text-gray-900 mt-2">Forensic Data Analysis</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Once acquired, data must be processed to extract intelligence. `pandas` is the workhorse for structured data, while the `struct` module provides the key to unlock binary file formats.</p>
+            </div>
+
+            <div class="section-card p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">The Investigative Workflow with pandas</h3>
+                <p class="text-gray-600 mb-6">`pandas` enables a rapid, iterative process of questioning and analysis. This interactive table demonstrates how to pivot from one lead to the next. Click on a task to see the method and an example insight.</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Investigative Task</th>
+                                <th scope="col" class="px-6 py-3">pandas Method(s)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pandas-table-body"></tbody>
+                    </table>
+                </div>
+                <div id="pandas-details" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden">
+                    <h4 id="pandas-details-title" class="font-semibold text-gray-800"></h4>
+                    <p id="pandas-details-text" class="text-sm text-gray-600 mt-2"></p>
+                    <div id="pandas-details-code" class="code-block text-sm mt-4"></div>
+                </div>
+            </div>
+
+            <div class="section-card p-6">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">Low-Level Forensics: Dissecting Binary Files with `struct`</h3>
+                <p class="text-gray-600 mb-6">The `struct` module is your key to parsing binary data. This interactive tool shows how to dissect a PNG file header. Click on a segment of the header to see the Python code used to parse it and the resulting value.</p>
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div>
+                        <h4 class="font-semibold text-center mb-2">PNG File Header</h4>
+                        <div id="file-dissector" class="flex flex-wrap font-mono text-sm border border-gray-300 rounded-lg p-2 bg-gray-50"></div>
+                    </div>
+                    <div id="struct-details" class="p-4 bg-gray-100 rounded-lg min-h-[150px]">
+                        <h4 class="font-semibold text-gray-800">Parsing Details</h4>
+                        <p class="text-sm text-gray-600 mb-4">Click a header segment to see details.</p>
+                        <div id="struct-code" class="code-block text-sm hidden"></div>
+                        <div id="struct-output" class="mt-4 hidden">
+                            <h5 class="font-semibold text-sm">Unpacked Value:</h5>
+                            <p id="struct-output-text" class="font-mono text-sm p-2 bg-white rounded border border-gray-200"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Integrated Workflow -->
+        <section id="workflow" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <span class="text-blue-600 font-semibold">Synthesis</span>
+                <h2 class="text-3xl font-bold text-gray-900 mt-2">Integrated Workflow: A Case Study</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">This timeline synthesizes all concepts into a cohesive workflow, demonstrating how the tools integrate to address a realistic disinformation campaign investigation. Click each phase to expand.</p>
+            </div>
+
+            <div class="relative pl-12">
+                <div class="timeline-line"></div>
+                <div id="timeline-container" class="space-y-12"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-100 border-t border-gray-200 mt-20">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
+            <p>Interactive Python Forensics Playbook. Adapted from the original blueprint.</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // Data
+    const envData = {
+        docker: {
+            title: 'Containerization with Docker',
+            description: 'Offers OS-level virtualization, packaging an application and its dependencies into a lightweight, portable container. Best for routine data acquisition and initial analysis where operational exposure, not system compromise, is the primary risk.',
+            pros: ['Fast deployment', 'Low resource overhead', 'Consistent environments via Dockerfile', 'Good for web scraping'],
+            cons: ['Shares host kernel (theoretical attack surface)', 'Less isolation than a VM']
+        },
+        vm: {
+            title: 'Full Virtualization with VMs',
+            description: 'Emulates a complete hardware system, running a full guest OS with its own kernel. This provides superior isolation, making it mandatory for analyzing potentially malicious or untrusted artifacts.',
+            pros: ['Maximum isolation (separate kernel)', 'Snapshot capability for clean state reversion', 'Can boot from raw disk images for analysis'],
+            cons: ['Higher resource usage (CPU/RAM)', 'Slower to start and deploy']
+        }
+    };
+
+    const logCodeData = {
+        formatter: `import logging
+import json
+from datetime import datetime
+
+class JsonFormatter(logging.Formatter):
+    def format(self, record):
+        log_record = {
+            "timestamp": datetime.utcfromtimestamp(record.created).isoformat() + "Z",
+            "level": record.levelname,
+            "message": record.getMessage(),
+            "module": record.name,
+            "function": record.funcName,
+            "line": record.lineno,
+            # Context can be added via Filters or Adapters
+            "target_url": getattr(record, 'target_url', 'N/A'),
+            "proxy_used": getattr(record, 'proxy_used', 'N/A')
+        }
+        return json.dumps(log_record)`,
+        output: `{
+  "timestamp": "2025-07-31T18:52:00.123456Z",
+  "level": "INFO",
+  "message": "Request successful",
+  "module": "acquisition.scraper",
+  "function": "fetch_page",
+  "line": 85,
+  "target_url": "https://example.com/data",
+  "proxy_used": "http://user:pass@1.2.3.4:8080"
+}`
+    };
+
+    const proxyChartData = {
+        labels: ['Cost', 'Anonymity', 'Success Rate (High-Sec)', 'Speed'],
+        datasets: [
+            {
+                label: 'Datacenter',
+                data: [9, 3, 3, 10],
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgb(255, 99, 132)',
+                pointBackgroundColor: 'rgb(255, 99, 132)',
+            },
+            {
+                label: 'Residential',
+                data: [5, 8, 9, 6],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgb(54, 162, 235)',
+                pointBackgroundColor: 'rgb(54, 162, 235)',
+            },
+            {
+                label: 'Mobile',
+                data: [2, 10, 10, 5],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgb(75, 192, 192)',
+                pointBackgroundColor: 'rgb(75, 192, 192)',
+            }
+        ]
+    };
+
+    const scrapyData = {
+        spider: { title: 'Spider', text: 'Defines the crawling logic: where to start (start_urls), how to follow links, and how to extract data (the "what").' },
+        engine: { title: 'Engine', text: 'The core component that controls the data flow between all other components, orchestrating the entire operation.' },
+        scheduler: { title: 'Scheduler', text: 'Receives requests from the Engine and queues them up to be fed to the Downloader. Manages request prioritization.' },
+        downloader: { title: 'Downloader', text: 'Fetches web pages. This is where Downloader Middlewares intercept requests to add proxies, headers, etc. (the "how").' },
+        pipeline: { title: 'Item Pipeline', text: 'Processes the data items extracted by the Spider. Used for cleaning, validating, and storing data (the "what to do with it").' }
+    };
+
+    const pandasData = [
+        { task: 'Initial Triage & Overview', methods: '.info(), .describe()', insight: 'Get a quick summary of the dataset: entry count, column types, and missing values.', code: `df.info()` },
+        { task: 'Find Most Active Actor/IOC', methods: '.value_counts()', insight: 'Count unique values in a column to quickly identify the most frequent IPs, user IDs, etc.', code: `df['source_ip'].value_counts().head(5)` },
+        { task: 'Isolate & Examine Activity', methods: 'Boolean Indexing, .loc', insight: 'Filter the DataFrame to create a subset containing only the activity of a specific actor or IOC.', code: `actor_df = df.loc[df['source_ip'] == '192.0.2.10']` },
+        { task: 'Build Activity Timeline', methods: '.to_datetime(), .resample()', insight: 'Convert string timestamps to datetime objects and resample data over time intervals (e.g., hourly, daily) to find patterns.', code: `df.resample('H')['event_id'].count()` },
+        { task: 'Profile Actor Behavior', methods: '.groupby().agg()', insight: 'Group data by an actor and aggregate other columns to build a profile of their behavior (e.g., unique ports targeted).', code: `df.groupby('source_ip').agg(unique_ports=('target_port', 'nunique'))` },
+        { task: 'Correlate Disparate Events', methods: '.merge(), .join()', insight: 'Combine different datasets (e.g., network logs and VPN logs) on a common key to find connections.', code: `pd.merge(network_logs, vpn_logs, on='user_id')` }
+    ];
+
+    const fileDissectorData = [
+        { name: 'PNG Signature', bytes: 8, code: `struct.unpack('>8s', header_bytes)`, value: `b'\\x89PNG\\r\\n\\x1a\\n'`, description: 'The fixed 8-byte signature that identifies a file as a PNG.' },
+        { name: 'IHDR Chunk Length', bytes: 4, code: `struct.unpack('>L', length_bytes)`, value: `13`, description: 'A 4-byte unsigned long (big-endian) specifying the length of the IHDR chunk data.' },
+        { name: 'IHDR Chunk Type', bytes: 4, code: `struct.unpack('>4s', type_bytes)`, value: `b'IHDR'`, description: 'A 4-byte chunk type code. IHDR is the image header chunk.' }
+    ];
+
+    const timelineData = [
+        {
+            phase: 'Phase 1: Secure Acquisition',
+            title: 'The unit deploys a Scrapy crawler to acquire all content from target websites.',
+            icon: '📡',
+            details: [
+                {
+                    heading: 'Environment',
+                    text: 'A Docker container is instantiated from a standard investigative image. A structured JSON logger is initialized, creating the first entry in the audit trail.',
+                    tool: 'Docker'
+                },
+                {
+                    heading: 'Tooling',
+                    text: 'A Scrapy project is configured for low-and-slow, evasive crawling with residential proxy and user-agent rotation middlewares enabled.',
+                    tool: 'Scrapy'
+                },
+                {
+                    heading: 'Execution & Output',
+                    text: 'The spider crawls the sites, downloads files, hashes them, and stores them in secure cloud storage. A record of each file is written to a central SQLite database, providing an inventory of all collected evidence.',
+                    tool: 'SQLite'
+                }
+            ]
+        },
+        {
+            phase: 'Phase 2: Data Correlation',
+            title: 'The focus shifts to analysis, using pandas to find connections in the collected data.',
+            icon: '🔗',
+            details: [
+                {
+                    heading: 'Environment',
+                    text: 'A Jupyter Notebook is launched in a new container with read-only access to the evidence database and logs.',
+                    tool: 'Jupyter'
+                },
+                {
+                    heading: 'Analysis',
+                    text: 'The evidence inventory is loaded into a pandas DataFrame. Frequency analysis (`.value_counts()`) reveals common external domains. Threat intel APIs are queried using `requests` to enrich the data.',
+                    tool: 'pandas'
+                },
+                {
+                    heading: 'The Pivot',
+                    text: 'The enriched DataFrame is grouped by hosting IP address (`.groupby()`), revealing clusters of websites co-hosted on the same infrastructure—a key investigative lead.',
+                    tool: 'pandas'
+                }
+            ]
+        },
+        {
+            phase: 'Phase 3: Artifact Forensics',
+            title: 'The downloaded files are analyzed for metadata and attribution clues.',
+            icon: '🔬',
+            details: [
+                {
+                    heading: 'Metadata Extraction',
+                    text: 'Python scripts use libraries like `pypdf` and `exifread` to extract all metadata (author, creation dates, GPS data) from documents and images.',
+                    tool: 'pypdf, exifread'
+                },
+                {
+                    heading: 'Cross-Artifact Correlation',
+                    text: 'All extracted metadata is compiled into a new pandas DataFrame. This becomes the focal point for attribution, searching for recurring author names or software versions across supposedly unrelated files.',
+                    tool: 'pandas'
+                },
+                {
+                    heading: 'Low-Level Fallback',
+                    text: 'A corrupt file that cannot be opened is analyzed with a custom script using `struct` to verify its header, confirming file corruption or deliberate obfuscation.',
+                    tool: 'struct'
+                }
+            ]
+        }
+    ];
+
+    // Navigation
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('main section[id]');
+    
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 80) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').substring(1) === current) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+    // Environment Isolation
+    const envSelector = document.getElementById('env-selector');
+    const envDetails = document.getElementById('env-details');
+    function updateEnvContent(type) {
+        const data = envData[type];
+        let prosList = data.pros.map(pro => `<li class="flex items-start"><span class="text-green-500 mr-2 mt-1">✓</span><span>${pro}</span></li>`).join('');
+        let consList = data.cons.map(con => `<li class="flex items-start"><span class="text-red-500 mr-2 mt-1">✗</span><span>${con}</span></li>`).join('');
+
+        envDetails.innerHTML = `
+            <h4 class="font-semibold text-lg mb-2">${data.title}</h4>
+            <p class="text-sm mb-4">${data.description}</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div><h5 class="font-semibold mb-2">Use When:</h5><ul class="space-y-1">${prosList}</ul></div>
+                <div><h5 class="font-semibold mb-2">Considerations:</h5><ul class="space-y-1">${consList}</ul></div>
+            </div>
+        `;
+        
+        envSelector.querySelectorAll('div[data-content]').forEach(el => {
+            el.classList.remove('border-blue-500', 'bg-blue-50');
+            el.classList.add('border-gray-300');
+        });
+        envSelector.querySelector(`div[data-content="${type}"]`).classList.add('border-blue-500', 'bg-blue-50');
+        envSelector.querySelector(`div[data-content="${type}"]`).classList.remove('border-gray-300');
+    }
+    envSelector.addEventListener('click', (e) => {
+        const target = e.target.closest('div[data-content]');
+        if (target) {
+            updateEnvContent(target.dataset.content);
+        }
+    });
+    updateEnvContent('docker');
+
+    // Logging
+    document.getElementById('log-code').textContent = logCodeData.formatter;
+    document.getElementById('log-output').textContent = logCodeData.output;
+    const logTabs = document.querySelectorAll('.tab-button');
+    const logContent = document.getElementById('log-content-display');
+    logTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            logTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            logContent.querySelectorAll('div[id]').forEach(content => content.classList.add('hidden'));
+            document.getElementById(tab.dataset.target).classList.remove('hidden');
+        });
+    });
+
+    // Proxy Chart
+    const ctx = document.getElementById('proxyChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'radar',
+        data: proxyChartData,
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: { color: '#E5E7EB' },
+                    grid: { color: '#E5E7EB' },
+                    pointLabels: { font: { size: 12 }, color: '#4B5563' },
+                    ticks: {
+                        display: false,
+                        stepSize: 2
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 10
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.r !== null) {
+                                // You can create a mapping from value to text if desired
+                                label += context.parsed.r + ' / 10';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Scrapy Diagram
+    const scrapyDiagram = document.getElementById('scrapy-diagram');
+    const scrapyInfoTitle = document.getElementById('scrapy-info-title');
+    const scrapyInfoText = document.getElementById('scrapy-info-text');
+    
+    scrapyDiagram.querySelectorAll('.scrapy-component').forEach(comp => {
+        comp.classList.add('cursor-pointer', 'p-2', 'border', 'rounded-md', 'w-full', 'text-center', 'bg-white', 'hover:bg-blue-50', 'hover:border-blue-400', 'transition-all');
+    });
+
+    function updateScrapyInfo(key) {
+        const data = scrapyData[key];
+        scrapyInfoTitle.textContent = data.title;
+        scrapyInfoText.textContent = data.text;
+        scrapyDiagram.querySelectorAll('.scrapy-component').forEach(comp => {
+            comp.classList.remove('bg-blue-100', 'border-blue-500', 'font-semibold');
+        });
+        scrapyDiagram.querySelector(`[data-info="${key}"]`).classList.add('bg-blue-100', 'border-blue-500', 'font-semibold');
+    }
+
+    scrapyDiagram.addEventListener('click', (e) => {
+        const target = e.target.closest('.scrapy-component');
+        if (target && target.dataset.info) {
+            updateScrapyInfo(target.dataset.info);
+        }
+    });
+    updateScrapyInfo('engine');
+
+    // Pandas Table
+    const pandasTableBody = document.getElementById('pandas-table-body');
+    const pandasDetails = document.getElementById('pandas-details');
+    const pandasDetailsTitle = document.getElementById('pandas-details-title');
+    const pandasDetailsText = document.getElementById('pandas-details-text');
+    const pandasDetailsCode = document.getElementById('pandas-details-code');
+
+    pandasData.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.className = 'bg-white border-b hover:bg-gray-50 cursor-pointer';
+        row.dataset.index = index;
+        row.innerHTML = `
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${item.task}</td>
+            <td class="px-6 py-4 font-mono">${item.methods}</td>
+        `;
+        pandasTableBody.appendChild(row);
+    });
+
+    pandasTableBody.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        if (row && row.dataset.index) {
+            const data = pandasData[row.dataset.index];
+            pandasDetailsTitle.textContent = data.task;
+            pandasDetailsText.textContent = data.insight;
+            pandasDetailsCode.textContent = data.code;
+            pandasDetails.classList.remove('hidden');
+
+            pandasTableBody.querySelectorAll('tr').forEach(r => r.classList.remove('bg-blue-50'));
+            row.classList.add('bg-blue-50');
+        }
+    });
+
+    // File Dissector
+    const fileDissector = document.getElementById('file-dissector');
+    const structCode = document.getElementById('struct-code');
+    const structOutput = document.getElementById('struct-output');
+    const structOutputText = document.getElementById('struct-output-text');
+    
+    let totalBytes = 0;
+    fileDissectorData.forEach((item, index) => {
+        const segment = document.createElement('div');
+        segment.className = 'p-2 m-1 border border-gray-400 rounded cursor-pointer hover:bg-blue-100 hover:border-blue-500 transition-all';
+        segment.textContent = item.name;
+        segment.dataset.index = index;
+        fileDissector.appendChild(segment);
+        totalBytes += item.bytes;
+    });
+
+    fileDissector.addEventListener('click', (e) => {
+        const segment = e.target.closest('div[data-index]');
+        if (segment && segment.dataset.index) {
+            const data = fileDissectorData[segment.dataset.index];
+            structCode.textContent = data.code;
+            structOutputText.textContent = `${data.value} // ${data.description}`;
+            structCode.classList.remove('hidden');
+            structOutput.classList.remove('hidden');
+            
+            fileDissector.querySelectorAll('div[data-index]').forEach(s => s.classList.remove('bg-blue-200', 'border-blue-600'));
+            segment.classList.add('bg-blue-200', 'border-blue-600');
+        }
+    });
+
+    // Timeline
+    const timelineContainer = document.getElementById('timeline-container');
+    timelineData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'relative timeline-item';
+        let detailsHtml = item.details.map(d => `
+            <div class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <h5 class="font-semibold text-gray-700">${d.heading}</h5>
+                <p class="text-sm text-gray-600 mt-1">${d.text}</p>
+                <div class="mt-2 text-xs font-semibold text-blue-600 bg-blue-100 inline-block px-2 py-1 rounded">${d.tool}</div>
+            </div>
+        `).join('');
+
+        div.innerHTML = `
+            <div class="cursor-pointer p-4 section-card timeline-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center mb-2">
+                           <span class="text-2xl mr-3">${item.icon}</span>
+                           <div>
+                               <p class="text-sm font-semibold text-blue-600">${item.phase}</p>
+                               <h4 class="font-semibold text-lg text-gray-800">${item.title}</h4>
+                           </div>
+                        </div>
+                    </div>
+                    <span class="timeline-toggle text-2xl text-gray-400 transform transition-transform">▶</span>
+                </div>
+                <div class="timeline-details hidden pl-10 mt-4">
+                    ${detailsHtml}
+                </div>
+            </div>
+        `;
+        timelineContainer.appendChild(div);
+    });
+
+    timelineContainer.addEventListener('click', (e) => {
+        const card = e.target.closest('.timeline-card');
+        if (card) {
+            const details = card.querySelector('.timeline-details');
+            const toggle = card.querySelector('.timeline-toggle');
+            details.classList.toggle('hidden');
+            toggle.classList.toggle('rotate-90');
+        }
+    });
+
+});
+</script>
+</body>
+</html>
