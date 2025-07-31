@@ -2,6 +2,7 @@
 A deep dive into key Python libraries for investigative work: requests and Scrapy for web data acquisition, pandas for data manipulation, and libraries for parsing binary file formats (e.g., struct).
 
 ---
+https://smcallan.github.io/Python-for-Forensic-Tooling/
 # A Blueprint for Python-Powered Digital Intelligence and Forensic Tooling
 The Operational Framework: Security, Auditability, and Cost Management
 The efficacy of any digital intelligence operation is not measured solely by the quality of its tools but by the rigor of its operational framework. For a small, independent unit, this framework must be built upon three non-negotiable pillars: operational security (OpSec), comprehensive auditability, and stringent cost management. Neglecting this foundation renders any technical capability operationally unsound, legally indefensible, and financially unsustainable. This section establishes the secure, auditable, and cost-managed environment in which all subsequent tooling and operations will be executed.
